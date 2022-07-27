@@ -16,22 +16,51 @@ context.fillRect(0, 0, canvas.width, canvas.height);
 
 // creating classes for players with their individual properties
 class Sprite {
-    constructor({position, velocity}) {
+    constructor({position, velocity, colour = 'red', offset}) {
         this.position = position,
         this.velocity = velocity,
+        this.width = 50
         this.height= 150
         this.lastKey
-     
+        this.attackBox = {
+            position: {
+              x: this.position.x,
+              y: this.position.y
+            },
+            offset,     
+            width: 100,
+            height: 50
+        }
+        // colour props
+        this.colour = colour
+        // attacking props
+        this.isAttacking 
+        
     }
+
     // define what our players will look like using draw method within constructor
     draw() {
-      context.fillStyle = 'red',    // player1 colour 
-      context.fillRect(this.position.x, this.position.y, 50, this.height)  
+      context.fillStyle = this.colour,    // player1 colour 
+      context.fillRect(this.position.x, this.position.y, this.width, this.height)  
+
+    //   attack mechanism
+    if (this.isAttacking) {
+    context.fillStyle = 'green'
+    context.fillRect(
+        this.attackBox.position.x, 
+        this.attackBox.position.y, 
+        this.attackBox.width, 
+        this.attackBox.height
+        )
+      }
     }
 
     // new method which update the properties as we go along
     update() {
         this.draw()
+
+        this.attackBox.position.x =this.position.x + this.attackBox.offset.x
+        this.attackBox.position.y = this.position.y
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
@@ -40,6 +69,16 @@ class Sprite {
         } 
         else   this.velocity.y += gravity
     };
+
+    attack () {
+        this.isAttacking = true
+        // time for attack
+        setTimeout(() => {
+            this.isAttacking = false
+        }, 100)
+    }
+       
+
 };
 
 // player1 left side of the screen 
@@ -51,7 +90,12 @@ const player1 = new Sprite({
  velocity:{           //second sprite = velocity
     x:0,
     y:0 
- }
+ },
+
+ offset: {
+    x: 0,
+    y: 0
+  },
 });
 
 // player 2 right side of the screen
@@ -63,6 +107,14 @@ const player2 = new Sprite({
   velocity:{
      x:0,
      y:0  
+  },
+
+//   enemy colour
+  colour: 'blue',
+
+  offset: {
+    x: -50,
+    y: 0
   }
  });
 
@@ -91,6 +143,16 @@ const keys =  {
     }
 }
 
+// rectangle collision (atack weapons)
+function rectanglarCollision ({ rectangle1, rectangle2}) {
+    return (
+        rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x
+         &&  rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width 
+         && rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y
+         &&  rectangle1.attackBox.position.y <= rectangle2.position.y + player2.height
+    )
+}
+
 // add player animation/velocity/speed
 function animate (){
     window.requestAnimationFrame(animate),
@@ -116,12 +178,35 @@ function animate (){
     } else if (keys.ArrowRight.pressed && player2.lastKey === "ArrowRight") {
         player2.velocity.x =+ 5
     }
+
+    //detect for collision within fighters on x and y axis 
+    // use a conditional statement to determine that
+    if (
+        rectanglarCollision({
+            rectangle1: player1,
+            rectangle2: player2
+        })
+        && player1.isAttacking
+         ) {
+        player1.isAttacking = false
+        console.log ('hit')
+    }  
+
+    if (
+        rectanglarCollision({
+            rectangle1: player2,
+            rectangle2: player1
+        })
+        && player2.isAttacking
+         ) {
+        player2.isAttacking = false
+        console.log ('enemy hit')
+    }  
 };
 animate();
 
 // add event listeners
 window.addEventListener('keydown', (event)=>{
-    console.log(event.key)
     switch (event.key){
         case 'd':                       // player1 moves forward
           keys.d.pressed = true
@@ -135,7 +220,11 @@ window.addEventListener('keydown', (event)=>{
           keys.w.pressed = true
           player1.velocity.y = -20
           break
-        
+        case ' ':                       // player1 attacks
+           player1.attack()
+          break
+          
+        // player2
         case 'ArrowLeft':                       // player2 moves forward
           keys.ArrowLeft.pressed = true
           player2.lastKey = "ArrowLeft"
@@ -148,10 +237,14 @@ window.addEventListener('keydown', (event)=>{
           keys.ArrowUp.pressed = true
           player2.velocity.y = -20
           break
+        case 'Enter':                       // player2 attacks
+          player2.attack()
+          break
 
         
+        
     }
-    console.log(event.key)
+
 
 });
 window.addEventListener('keyup', (event)=>{  //stops the player from moving outside the screen on the x axis
@@ -178,6 +271,6 @@ window.addEventListener('keyup', (event)=>{  //stops the player from moving outs
             keys.ArrowUp.pressed = false
             break
     }
-    console.log(event.key)
+
 
 });
