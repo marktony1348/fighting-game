@@ -35,7 +35,8 @@ class Sprite {
         this.colour = colour
         // attacking props
         this.isAttacking 
-        
+        // health props
+        this.health = 100
     }
 
     // define what our players will look like using draw method within constructor
@@ -189,7 +190,8 @@ function animate (){
         && player1.isAttacking
          ) {
         player1.isAttacking = false
-        console.log ('hit')
+        player2.health -= 10
+        document.querySelector('#player2Health').style.width = player2.health + '%'
     }  
 
     if (
@@ -200,7 +202,8 @@ function animate (){
         && player2.isAttacking
          ) {
         player2.isAttacking = false
-        console.log ('enemy hit')
+        player1.health -= 10
+        document.querySelector('#player1Health').style.width = player1.health + '%'
     }  
 };
 animate();
