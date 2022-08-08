@@ -154,6 +154,39 @@ function rectanglarCollision ({ rectangle1, rectangle2}) {
     )
 }
 
+
+function determineWinner ({player1, player2, timerId}) {
+    clearTimeout(timerId)
+    document.querySelector('#tieDisplay').style.display = 'flex'
+    if (player1.health === player2.health) {
+        document.querySelector('#tieDisplay').innerHTML = 'Tie'
+    } else if (player1.health > player2.health) {
+        document.querySelector('#tieDisplay').innerHTML = 'player1 wins'
+    } else if (player2.health > player1.health) {
+        document.querySelector('#tieDisplay').innerHTML = 'player2 wins'
+    }   
+}
+
+// timer function
+let timer = 60;
+let timerId
+function decreaseTimer() {
+    if (timer > 0) { 
+       timerId = setTimeout(decreaseTimer, 1000)
+        timer--
+        document.querySelector('#timer').innerHTML = timer
+    }
+    
+    // player win detereminant
+    if (timer === 0) {
+        document.querySelector('#tieDisplay').style.display = 'flex'
+        determineWinner({player1, player2, timerId})
+    
+    }
+   
+}
+decreaseTimer()
+
 // add player animation/velocity/speed
 function animate (){
     window.requestAnimationFrame(animate),
@@ -205,6 +238,11 @@ function animate (){
         player1.health -= 10
         document.querySelector('#player1Health').style.width = player1.health + '%'
     }  
+
+    // end game based on health
+    if (player1.health <= 0 || player2.health <= 0) {
+        determineWinner({player1, player2, timerId})
+    }
 };
 animate();
 
