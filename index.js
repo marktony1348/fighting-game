@@ -14,76 +14,26 @@ const gravity = 0.7;
 // define the background colour for the canvas using a method called for drawing
 context.fillRect(0, 0, canvas.width, canvas.height);
 
-// creating classes for players with their individual properties
-class Sprite {
-    constructor({position, velocity, colour = 'red', offset}) {
-        this.position = position,
-        this.velocity = velocity,
-        this.width = 50
-        this.height= 150
-        this.lastKey
-        this.attackBox = {
-            position: {
-              x: this.position.x,
-              y: this.position.y
-            },
-            offset,     
-            width: 100,
-            height: 50
-        }
-        // colour props
-        this.colour = colour
-        // attacking props
-        this.isAttacking 
-        // health props
-        this.health = 100
-    }
+const background = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageSrc: './img/background.png'
+})
 
-    // define what our players will look like using draw method within constructor
-    draw() {
-      context.fillStyle = this.colour,    // player1 colour 
-      context.fillRect(this.position.x, this.position.y, this.width, this.height)  
-
-    //   attack mechanism
-    if (this.isAttacking) {
-    context.fillStyle = 'green'
-    context.fillRect(
-        this.attackBox.position.x, 
-        this.attackBox.position.y, 
-        this.attackBox.width, 
-        this.attackBox.height
-        )
-      }
-    }
-
-    // new method which update the properties as we go along
-    update() {
-        this.draw()
-
-        this.attackBox.position.x =this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
-        this.position.x += this.velocity.x
-        this.position.y += this.velocity.y
-
-        if (this.position.y + this.height + this.velocity.y >= canvas.height) {
-            this.velocity.y= 0
-        } 
-        else   this.velocity.y += gravity
-    };
-
-    attack () {
-        this.isAttacking = true
-        // time for attack
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 100)
-    }
-       
-
-};
+const shop = new Sprite({
+    position: {
+        x: 600,
+        y: 130
+    },
+    imageSrc: './img/shop.png',
+    scale: 2.75,
+    framesMax: 6
+})
 
 // player1 left side of the screen 
-const player1 = new Sprite({
+const player1 = new Fighter ({
    position: {         //first sprite = position
     x:0,
     y:0
@@ -100,7 +50,7 @@ const player1 = new Sprite({
 });
 
 // player 2 right side of the screen
-const player2 = new Sprite({
+const player2 = new Fighter ({
     position: {             
      x:500,
      y:100
@@ -144,47 +94,7 @@ const keys =  {
     }
 }
 
-// rectangle collision (atack weapons)
-function rectanglarCollision ({ rectangle1, rectangle2}) {
-    return (
-        rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x
-         &&  rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width 
-         && rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y
-         &&  rectangle1.attackBox.position.y <= rectangle2.position.y + player2.height
-    )
-}
-
-
-function determineWinner ({player1, player2, timerId}) {
-    clearTimeout(timerId)
-    document.querySelector('#tieDisplay').style.display = 'flex'
-    if (player1.health === player2.health) {
-        document.querySelector('#tieDisplay').innerHTML = 'Tie'
-    } else if (player1.health > player2.health) {
-        document.querySelector('#tieDisplay').innerHTML = 'player1 wins'
-    } else if (player2.health > player1.health) {
-        document.querySelector('#tieDisplay').innerHTML = 'player2 wins'
-    }   
-}
-
-// timer function
-let timer = 60;
-let timerId
-function decreaseTimer() {
-    if (timer > 0) { 
-       timerId = setTimeout(decreaseTimer, 1000)
-        timer--
-        document.querySelector('#timer').innerHTML = timer
-    }
-    
-    // player win detereminant
-    if (timer === 0) {
-        document.querySelector('#tieDisplay').style.display = 'flex'
-        determineWinner({player1, player2, timerId})
-    
-    }
-   
-}
+// 
 decreaseTimer()
 
 // add player animation/velocity/speed
@@ -192,6 +102,8 @@ function animate (){
     window.requestAnimationFrame(animate),
     context.fillStyle= 'black'
     context.fillRect(0,0, canvas.width, canvas.height),
+    background.update(),
+    shop.update(),
     player1.update(),
     player2.update()
     
