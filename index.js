@@ -47,6 +47,36 @@ const player1 = new Fighter ({
     x: 0,
     y: 0
   },
+  imageSrc: './img/player1/Idle.png',
+  framesMax: 8,
+  scale: 2.5,
+  offset: {
+    x: 215,
+    y: 157
+    
+},
+sprites: {
+    idle:{
+        imageSrc: './img/player1/Idle.png',
+        framesMax: 8,
+    },
+    run:{
+        imageSrc: './img/player1/Run.png',
+        framesMax: 8,
+    },
+    jump:{
+        imageSrc: './img/player1/Jump.png',
+        framesMax: 2,
+    },
+    fall:{
+        imageSrc: './img/player1/Fall.png',
+        framesMax: 2,
+    },
+    attack1:{
+        imageSrc: './img/player1/Attack1.png',
+        framesMax: 6,
+    },
+}
 });
 
 // player 2 right side of the screen
@@ -66,7 +96,37 @@ const player2 = new Fighter ({
   offset: {
     x: -50,
     y: 0
-  }
+  },
+  imageSrc: './img/player2/Idle.png',
+  framesMax: 4,
+  scale: 2.5,
+  offset: {
+    x: 215,
+    y: 167
+    
+},
+sprites: {
+    idle:{
+        imageSrc: './img/player2/Idle.png',
+        framesMax: 4,
+    },
+    run:{
+        imageSrc: './img/player2/Run.png',
+        framesMax: 8,
+    },
+    jump:{
+        imageSrc: './img/player2/Jump.png',
+        framesMax: 2,
+    },
+    fall:{
+        imageSrc: './img/player2/Fall.png',
+        framesMax: 2,
+    },
+    attack1:{
+        imageSrc: './img/player2/Attack1.png',
+        framesMax: 4,
+    },
+}
  });
 
 // create the keys for  players movement variable
@@ -112,17 +172,40 @@ function animate (){
     
 
     // player1 movement
-    if ( keys.d.pressed && player1.lastKey === "d") {
-        player1.velocity.x =+ 5
-    } else if (keys.a.pressed && player1.lastKey === "a") {
+    if ( keys.a.pressed && player1.lastKey === "a") {
         player1.velocity.x =+ -5
+        player1.switchSprite('run')
+    } else if (keys.d.pressed && player1.lastKey === "d") {
+        player1.velocity.x =+ 5
+        player1.switchSprite('run')
+    } else {
+        player1.switchSprite('idle')
     }
+
+    // player1 jump velocity (set using a conditional statement)
+    if (player1.velocity.y < 0) {
+        player1.switchSprite('jump')
+    } else if (player1.velocity.y > 0) {
+        player1.switchSprite('fall')
+    }
+
 
     // player2 movement
     if ( keys.ArrowLeft.pressed && player2.lastKey === "ArrowLeft") {
         player2.velocity.x =+ -5
+        player2.switchSprite('run')
     } else if (keys.ArrowRight.pressed && player2.lastKey === "ArrowRight") {
         player2.velocity.x =+ 5
+        player2.switchSprite('run')
+    } else {
+        player2.switchSprite('idle')
+    }
+
+     // player2 jump velocity (set using a conditional statement)
+     if (player2.velocity.y < 0) {
+        player2.switchSprite('jump')
+    } else if (player2.velocity.y > 0) {
+        player2.switchSprite('fall')
     }
 
     //detect for collision within fighters on x and y axis 
