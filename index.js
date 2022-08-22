@@ -76,8 +76,28 @@ sprites: {
         imageSrc: './img/player1/Attack1.png',
         framesMax: 6,
     },
+    takeHit:{
+        imageSrc: './img/player1/Take Hit - white silhouette.png',
+        framesMax: 4,
+    },
+    death:{
+        imageSrc: './img/player1/Death.png',
+        framesMax: 6,
+    },
+    
+},
+attackBox: {
+    offset: {
+        x: 100,
+        y: 50
+    },
+    width: 160,
+    height: 50
 }
+
 });
+
+
 
 // player 2 right side of the screen
 const player2 = new Fighter ({
@@ -90,7 +110,7 @@ const player2 = new Fighter ({
      y:0  
   },
 
-//   enemy colour
+//    colour
   colour: 'blue',
 
   offset: {
@@ -126,6 +146,22 @@ sprites: {
         imageSrc: './img/player2/Attack1.png',
         framesMax: 4,
     },
+    takeHit:{
+        imageSrc: './img/player2/Take hit.png',
+        framesMax: 3,
+    },
+    death:{
+        imageSrc: './img/player2/Death.png',
+        framesMax: 7,
+    },
+},
+attackBox: {
+    offset: {
+        x: -170,
+        y: 50
+    },
+    width: 170,
+    height: 50
 }
  });
 
@@ -215,24 +251,40 @@ function animate (){
             rectangle1: player1,
             rectangle2: player2
         })
-        && player1.isAttacking
-         ) {
+        && 
+        player1.isAttacking && 
+        player1.framesCurrent === 4
+        ) {
+        
+        player2.takeHit()
         player1.isAttacking = false
-        player2.health -= 10
         document.querySelector('#player2Health').style.width = player2.health + '%'
     }  
+
+    // player1 missing attack
+    if (player1.isAttacking && player1.framesCurrent === 4) {
+        player1.isAttacking = false
+    }
 
     if (
         rectanglarCollision({
             rectangle1: player2,
             rectangle2: player1
         })
-        && player2.isAttacking
-         ) {
+        && 
+        player2.isAttacking && 
+        player2.framesCurrent === 2
+     ) {
+
+        player1.takeHit()
         player2.isAttacking = false
-        player1.health -= 10
         document.querySelector('#player1Health').style.width = player1.health + '%'
     }  
+    
+    // player2 missing attack
+    if (player2.isAttacking && player2.framesCurrent === 2) {
+        player2.isAttacking = false
+    }
 
     // end game based on health
     if (player1.health <= 0 || player2.health <= 0) {
@@ -242,48 +294,53 @@ function animate (){
 animate();
 
 // add event listeners
-window.addEventListener('keydown', (event)=>{
-    switch (event.key){
-        case 'd':                       // player1 moves forward
-          keys.d.pressed = true
-          player1.lastKey= "d"
-          break
-        case 'a':                       // player1 moves backwards
-          keys.a.pressed = true
-          player1.lastKey= "a"
-          break
-        case 'w':                       // player1 jumps
-          keys.w.pressed = true
-          player1.velocity.y = -20
-          break
-        case ' ':                       // player1 attacks
-           player1.attack()
-          break
-          
+window.addEventListener('keydown', (event) => {
+        if(!player1.dead) {
+
+        switch (event.key){
+            case 'd':                       
+              keys.d.pressed = true
+              player1.lastKey= "d"
+              break
+            case 'a':                       
+              keys.a.pressed = true
+              player1.lastKey= "a"
+              break
+            case 'w':                       
+              keys.w.pressed = true
+              player1.velocity.y = -20
+              break
+            case ' ':                       
+               player1.attack()
+               break
+        }
+    }
+     
+     if(!player2.dead) {
+     switch (event.key) {
         // player2
-        case 'ArrowLeft':                       // player2 moves forward
+        case 'ArrowLeft':                       
           keys.ArrowLeft.pressed = true
           player2.lastKey = "ArrowLeft"
           break
-        case 'ArrowRight':                       // player2 moves backward
+        case 'ArrowRight':                       
           keys.ArrowRight.pressed = true
           player2.lastKey = "ArrowRight"
           break
-        case 'ArrowUp':                       // player2 jumps
+        case 'ArrowUp':                       
           keys.ArrowUp.pressed = true
           player2.velocity.y = -20
           break
-        case 'Enter':                       // player2 attacks
+        case 'Enter':                       
           player2.attack()
           break
-
-        
-        
+        }
     }
 
-
 });
-window.addEventListener('keyup', (event)=>{  //stops the player from moving outside the screen on the x axis
+
+
+window.addEventListener('keyup', (event)=>{  
     // player1
     switch (event.key){
         case 'd':
