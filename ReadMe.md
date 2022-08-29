@@ -34,10 +34,11 @@
 - run 
 - attack
 - jump
-
 - react to the sprite attacks
 - receive hit animation
 - death animation
+
+**other requirements**
 - push live
 - adaptation  for pad (tbd)
 - run on unity engine (tbd)
