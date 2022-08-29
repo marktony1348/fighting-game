@@ -8,7 +8,7 @@
 
 **Overview**:
 - A personal basic 2d fighting game ("because i love games"). The application presents users with players (fighters) to show their sword-slashing skills. It uses majorly javascript for the UI layout and would be upscaled using either react or Angular and more fighters (COMING SOON !!!).
-<img src="img/screenshot.png" height = 200 width = 200>
+<img src="img/screenshot.png" height= '300' width= '200'>
 
 
 **Tools**:
