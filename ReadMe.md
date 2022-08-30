@@ -47,7 +47,7 @@
 - To view and use the app, fork the 'index html' code from my github reppository and  open directly in your web browser.
 
 [live demo link]
-(https://https://marktonyfighting-game.netlify.app/)
+(https://marktonyfighting-game.netlify.app/)
 
 
 **Contact**:
